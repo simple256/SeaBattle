@@ -31,7 +31,7 @@ class App extends React.Component {
       return <EnterName changeCurrentPage={this.changeCurrentPage} />
     }
     else if (this.state.currentPage === "game") {
-      return <Game playername = {this.state.playername}/>
+      return <Game playername = {this.state.playername} changeCurrentPage={this.changeCurrentPage} />
     }
   }
 }

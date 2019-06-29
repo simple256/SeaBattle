@@ -1,14 +1,20 @@
-import Field from "./Field";
+// import Field from "./Field";
 
-// class Player {
-//     field;
-//     enemyField;
+class Player {
+    field;
+    enemyField;
+    name; 
 
+    constructor(playerName){
+        this.name = playerName;
 
-//     constructor(){
-//         this.field = new Field();
-//         this.enemyField = new Field();
-//     }
-// }
+        this.field = new Field();
+        this.field.create();
+        this.field.randomAllocation();
 
-// Player.prototype.turn = function() {};
+        this.enemyField = new Field();
+        this.enemyField.create();
+    }
+}
+
+Player.prototype.turn = function() {};

@@ -1,5 +1,3 @@
-import Ship from "./Ship";
-
 // Игровое поле
 class Field {
     // Размерность игрового поля
@@ -59,11 +57,14 @@ class Field {
 
     // Случайное размещение кораблей на игровом поле c максимальной длиной корабля shipMaxLen
     randomAllocation = function () {
-        for (var i = this.shipMaxLen; i > 0; i--)
-            for (var j = 0; j < this.shipMaxLen - (i + 1); j++) {
+        var count = 1;
+        for (var i = this.shipMaxLen; i > 0; i--) {
+            for (var j = 0; j < count; j++) {
                 var places = this.emptyPlaces(i);
                 this.setShip(this.choosePlace(places));
             }
+            count++;
+        }
     }
 
     choosePlace = function (places) {
@@ -137,9 +138,9 @@ class Field {
             this.field[coord.i - 1][coord.j + 1] = surroundValue;
     }
 
-    setShip = function (place) {
+    setShip = function (place, placeValue = 1, surroundValue = 4) {
         place.forEach(coord => {
-            this.setCoordAndSurroundingArea(coord, 1, 4);
+            this.setCoordAndSurroundingArea(coord, placeValue, surroundValue);
         });
         var ship = new Ship(place);
         this.ships.push(ship);
@@ -160,7 +161,7 @@ Field.prototype.create = function () {
 }
 
 Field.prototype.fire = function (coord) {
-    var status;
+    var result = {};
     /*  *** Описание результатов выстрела ***
         died - корабль gолностью выведен из строя
         hurted - корабль подбит
@@ -172,29 +173,32 @@ Field.prototype.fire = function (coord) {
             if (this.ships[i].containCoordinate(coord)) {
                 this.ships[i].hurted();
                 this.field[coord.i][coord.j] = 2;
-                status = this.ships[i].checkStatus();
+                result.status = this.ships[i].checkStatus();
 
-                if (this.ship.filter(elem =>
+                if (this.ships.filter(elem =>
                     elem.checkStatus() !== "died"
                 ).length === 0)
-                    status = "endgame";
-                return status;
+                    result.status = "endgame";
+                if (result.status === "died")
+                    result.shipCoords = this.ships[i].shipCoordinates;
+                return result;
             }
     } else {
-        status = "empty";
-        return status;
+        result.status = "empty";
+        return result;
     }
 }
 
-// Field.prototype.set = function (coord, type) {
-//     if (type > -1 && type < 6)
-//         this.field[coord.i][coord.j] = type;
-//     else
-//         throw "Неверно указан тип для присваимаемого значения поля";
-// }
+Field.prototype.set = function (coord, type) {
+    if (type > -1 && type < 6)
+        this.field[coord.i][coord.j] = type;
+    else
+        throw "Неверно указан тип для присваимаемого значения поля";
+}
 
 // Field.prototype.check = function (coord) {
 //     return this.field[coord.i][coord.j];
 // }
 
 
+// export default Field;

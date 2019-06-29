@@ -27,7 +27,7 @@ class Ship {
 
     // Проверка соответствия координаты к кораблю
     containCoordinate = function (coord) {
-        return this.shipCoordinates.filer(elem => elem.i === coord.i &&
+        return this.shipCoordinates.filter(elem => elem.i === coord.i &&
             elem.j === coord.j).length > 0
     }
 
