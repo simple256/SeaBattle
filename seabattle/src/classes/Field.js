@@ -55,6 +55,16 @@ class Field {
         return places;
     }
 
+    // Убивает корабль (для случая поля противника)
+    killShip = function(shipLength) {
+        for (var i = 0; i < this.ships.length; i++) {
+            if (this.ships[i].shipLen === shipLength && this.ships[i].status !== "died"){
+                this.ships[i].status = "died";
+                break;
+            }
+        }
+    }
+
     // Случайное размещение кораблей на игровом поле c максимальной длиной корабля shipMaxLen
     randomAllocation = function () {
         var count = 1;
@@ -71,6 +81,7 @@ class Field {
         if (places.length === 0) {
             throw "Нет свободных мест";
         }
+        places = places.filter((v, i, a) => a.indexOf(v) === i); 
         return places[Math.floor(Math.random() * places.length)];
     }
 
@@ -138,12 +149,14 @@ class Field {
             this.field[coord.i - 1][coord.j + 1] = surroundValue;
     }
 
-    setShip = function (place, placeValue = 1, surroundValue = 4) {
+    setShip = function (place, placeValue = 1, surroundValue = 4, addShiptoShips = true) {
         place.forEach(coord => {
             this.setCoordAndSurroundingArea(coord, placeValue, surroundValue);
         });
-        var ship = new Ship(place);
-        this.ships.push(ship);
+        if (addShiptoShips) {
+            var ship = new Ship(place);
+            this.ships.push(ship);
+        }
     }
 
     constructor() {
@@ -176,17 +189,38 @@ Field.prototype.fire = function (coord) {
                 result.status = this.ships[i].checkStatus();
 
                 if (this.ships.filter(elem =>
-                    elem.checkStatus() !== "died"
-                ).length === 0)
+                    elem.checkStatus() !== "died").length === 0) {
+                    result.ship = this.ships[i];
                     result.status = "endgame";
+                    return result;
+                    }
                 if (result.status === "died")
-                    result.shipCoords = this.ships[i].shipCoordinates;
+                    result.ship = this.ships[i];
                 return result;
             }
     } else {
         result.status = "empty";
         return result;
     }
+}
+
+Field.prototype.searchFirePlaces = function (coord) {
+    var places = [];
+
+    if (coord.i > 0 &&
+        this.field[coord.i - 1][coord.j] === 0)
+        places.push({i: coord.i - 1, j: coord.j})
+    if (coord.i < this.N - 1 &&
+        this.field[coord.i + 1][coord.j]  === 0)
+        places.push({i: coord.i + 1, j: coord.j})
+    if (coord.j > 0 &&
+        this.field[coord.i][coord.j - 1]  === 0)
+        places.push({i: coord.i, j: coord.j - 1})
+    if (coord.j < this.N - 1 &&
+        this.field[coord.i][coord.j + 1]  === 0)
+        places.push({i: coord.i, j: coord.j + 1})
+
+    return places;
 }
 
 Field.prototype.set = function (coord, type) {

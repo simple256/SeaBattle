@@ -6,12 +6,14 @@ class Game {
         this.winner = undefined;
     }
 
+    // Ход игрока player на игровое поле противника rival по координате coord
+    // Возвращает статус после хода убит/ранен/выстрел мимо/конец игры с выигрышем
     turn = function (player, rival, coord) {
         var result = rival.field.fire(coord);
-        console.log(result);
         switch (result.status) {
             case 'died':
-                player.enemyField.setShip(result.shipCoords, 3, 4);
+                player.enemyField.setShip(result.ship.shipCoordinates, 3, 4, false);
+                player.enemyField.killShip(result.ship.shipLen);
                 break;
             case 'hurted':
                 player.enemyField.set(coord, 2);
@@ -21,12 +23,14 @@ class Game {
                 player.enemyField.set(coord, 5);
                 break;
             case 'endgame':
-                player.enemyField.setShip(result.shipCoords, 3, 4);
+                player.enemyField.set(coord, 2);
+                player.enemyField.killShip(result.ship.shipLen);
                 this.endGame = true;
                 this.winner = player.name;
                 break;
             default:
                 break;
         }
+        return result.status;
     }
 }

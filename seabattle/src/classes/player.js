@@ -1,11 +1,5 @@
-// import Field from "./Field";
-
 class Player {
-    field;
-    enemyField;
-    name; 
-
-    constructor(playerName){
+    constructor(playerName) {
         this.name = playerName;
 
         this.field = new Field();
@@ -14,7 +8,55 @@ class Player {
 
         this.enemyField = new Field();
         this.enemyField.create();
-    }
-}
+        this.enemyField.ships = [];
 
-Player.prototype.turn = function() {};
+        this.enemyField.ships.push(new Ship(null, 4));
+
+        this.enemyField.ships.push(new Ship(null, 3));
+        this.enemyField.ships.push(new Ship(null, 3));
+
+        this.enemyField.ships.push(new Ship(null, 2));
+        this.enemyField.ships.push(new Ship(null, 2));
+        this.enemyField.ships.push(new Ship(null, 2));
+
+        this.enemyField.ships.push(new Ship(null, 1));
+        this.enemyField.ships.push(new Ship(null, 1));
+        this.enemyField.ships.push(new Ship(null, 1));
+        this.enemyField.ships.push(new Ship(null, 1));
+    }
+};
+
+Player.prototype.autoturn = function () {
+    var coord = {};
+    var freeSpace = [];
+    // Для случая если есть подбитый корабль
+    for (var i = 0; i < this.enemyField.N; i++) {
+        for (var j = 0; j < this.enemyField.N; j++) {
+            if (this.enemyField.field[i][j] === 2) {
+                freeSpace = freeSpace.concat(this.enemyField.searchFirePlaces({ i: i, j: j }));
+            }
+        }
+    };
+
+    if (freeSpace.length !== 0) {
+        // Выбирает уникальные ходы
+        freeSpace = freeSpace.filter((v, i, a) => a.indexOf(v) === i);
+        // Случайным образом выбирает из уникальных ходов
+        coord = freeSpace[Math.floor(Math.random() * freeSpace.length)];
+        console.log(freeSpace);
+        return coord;
+    }
+
+    var maxLen = 1;
+
+    for (var s = 0; s < this.enemyField.ships.length; s++) {
+        if (this.enemyField.ships[s].shipLen > maxLen && this.enemyField.ships[s].status !== "died")
+            maxLen = this.enemyField.ships[s].shipLen;
+    }
+    var places = this.enemyField.emptyPlaces(maxLen);
+    places = places.filter((v, i, a) => a.indexOf(v) === i);
+    console.log(places);
+    var place = places[Math.floor(Math.random() * places.length)];
+    coord = place[Math.floor(Math.random() * place.length)];
+    return coord;
+};
