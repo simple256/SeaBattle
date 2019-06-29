@@ -6,33 +6,33 @@ import Game from "./components/Game";
 import EnterName from "./components/EnterName";
 
 class App extends React.Component {
-  
+
   constructor() {
     super();
     this.state = {
       currentPage: "startpage",
-      difficulty: 2,
+      playername: "",
     }
   }
 
-  changeCurrentPage = (newPage) => 
-  {
-    this.setState({currentPage: newPage});
+  changeCurrentPage = (newPage) => {
+    this.setState({ currentPage: newPage });
   }
 
+  changePlayerName = (name) => {
+    this.setState({ playername: name });
+  }
 
   render() {
-
-    if (this.state.currentPage === "startpage")
-      return <StartPage changeCurrentPage = {this.changeCurrentPage}/>
+    if (this.state.currentPage === "startpage") {
+      return <StartPage changeCurrentPage={this.changeCurrentPage} />
+    }
     else if (this.state.currentPage === "entername") {
-      return <EnterName changeCurrentPage = {this.changeCurrentPage}/>
+      return <EnterName changeCurrentPage={this.changeCurrentPage} />
     }
     else if (this.state.currentPage === "game") {
-      return <Game/>
+      return <Game playername = {this.state.playername}/>
     }
-      
-
   }
 }
 
