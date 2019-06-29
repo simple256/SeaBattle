@@ -2,8 +2,11 @@
 class Field {
     // Размерность игрового поля
     N = 10;
+    // Максимальная длина корабля
+    shipMaxLen = 4;
     // Игровое поле (двумерный массив)
     field = [];
+
     /*  *** Описание типов, хранимых в игровом поле ***
         0 - пустая ячейка
         1 - занятая целой частью корабля/целым кораблем
@@ -12,6 +15,9 @@ class Field {
         4 - ячейка, находящаяся рядом с кораблем
     */
 
+    ships = [];
+
+    // Функция для поиска подходящих мест для размещения корабля длиной shipLen
     emptyPlaces = function (shipLen) {
         var places = [];
         var tempPlaceI, tempPlaceJ;
@@ -46,13 +52,21 @@ class Field {
         return places;
     }
 
-    choosePlace = function (places) {
-        if (places.length === 0)
-            throw "Нет свободных мест";
-        return places[Math.floor(Math.random() * places.length)];
+    // Случайное размещение кораблей на игровом поле c максимальной длиной корабля shipMaxLen
+    randomAllocation = function () {      
+        for (var i = this.shipMaxLen; i > 0; i--)
+            for (var j = 0; j < this.shipMaxLen - (i+1); j++) {
+                var places = this.emptyPlaces(i);
+                this.setShip(this.choosePlace(places));
+            }
     }
 
-    // Math.floor(Math.random() * r.length);
+    choosePlace = function (places) {
+        if (places.length === 0) {
+            throw "Нет свободных мест";
+        }
+        return places[Math.floor(Math.random() * places.length)];
+    }
 
     setShip = function (place) {
         place.forEach(elem => {
@@ -69,7 +83,7 @@ class Field {
             if (elem.j > 0 && elem.i > 0 && this.field[elem.i - 1][elem.j - 1] === 0)
                 this.field[elem.i - 1][elem.j - 1] = 4;
             if (elem.j > 0 && elem.i < this.N - 1 && this.field[elem.i + 1][elem.j - 1] === 0)
-            this.field[elem.i + 1][elem.j - 1] = 4;
+                this.field[elem.i + 1][elem.j - 1] = 4;
 
             if (elem.j < this.N - 1 && elem.i < this.N - 1 && this.field[elem.i + 1][elem.j + 1] === 0)
                 this.field[elem.i + 1][elem.j + 1] = 4;
