@@ -1,4 +1,4 @@
-class Game {
+class PlayingGame {
     constructor(PlayerName) {
         this.player = new Player(PlayerName);
         this.computer = new Player("Computer");

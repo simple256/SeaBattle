@@ -56,9 +56,9 @@ class Field {
     }
 
     // Убивает корабль (для случая поля противника)
-    killShip = function(shipLength) {
+    killShip = function (shipLength) {
         for (var i = 0; i < this.ships.length; i++) {
-            if (this.ships[i].shipLen === shipLength && this.ships[i].status !== "died"){
+            if (this.ships[i].shipLen === shipLength && this.ships[i].status !== "died") {
                 this.ships[i].status = "died";
                 break;
             }
@@ -77,11 +77,13 @@ class Field {
         }
     }
 
+    // Выбор случайного места для выстрела
     choosePlace = function (places) {
         if (places.length === 0) {
             throw "Нет свободных мест";
         }
-        places = places.filter((v, i, a) => a.indexOf(v) === i); 
+        // Выбор уникальных значений
+        places = places.filter((v, i, a) => a.indexOf(v) === i);
         return places[Math.floor(Math.random() * places.length)];
     }
 
@@ -107,6 +109,7 @@ class Field {
             this.field[coord.i - 1][coord.j + 1] = surroundValue;
     }
 
+    // Установка значения coordValue координаты coord и окружающих точек значениями surroundValue
     setCoordAndSurroundingArea = function (coord, coordValue, surroundValue) {
         this.field[coord.i][coord.j] = coordValue;
         if (coord.i > 0 &&
@@ -149,6 +152,7 @@ class Field {
             this.field[coord.i - 1][coord.j + 1] = surroundValue;
     }
 
+    // Установка корабля в координатах place
     setShip = function (place, placeValue = 1, surroundValue = 4, addShiptoShips = true) {
         place.forEach(coord => {
             this.setCoordAndSurroundingArea(coord, placeValue, surroundValue);
@@ -164,6 +168,7 @@ class Field {
     }
 }
 
+// Инициализация пустого игрового поля
 Field.prototype.create = function () {
     for (var i = 0; i < this.N; i++) {
         this.field[i] = [];
@@ -173,6 +178,7 @@ Field.prototype.create = function () {
     }
 }
 
+// Огонь по полю
 Field.prototype.fire = function (coord) {
     var result = {};
     /*  *** Описание результатов выстрела ***
@@ -193,7 +199,7 @@ Field.prototype.fire = function (coord) {
                     result.ship = this.ships[i];
                     result.status = "endgame";
                     return result;
-                    }
+                }
                 if (result.status === "died")
                     result.ship = this.ships[i];
                 return result;
@@ -204,35 +210,30 @@ Field.prototype.fire = function (coord) {
     }
 }
 
+// Поиск возможных выстрелов для подбитой точки
 Field.prototype.searchFirePlaces = function (coord) {
     var places = [];
 
     if (coord.i > 0 &&
         this.field[coord.i - 1][coord.j] === 0)
-        places.push({i: coord.i - 1, j: coord.j})
+        places.push({ i: coord.i - 1, j: coord.j })
     if (coord.i < this.N - 1 &&
-        this.field[coord.i + 1][coord.j]  === 0)
-        places.push({i: coord.i + 1, j: coord.j})
+        this.field[coord.i + 1][coord.j] === 0)
+        places.push({ i: coord.i + 1, j: coord.j })
     if (coord.j > 0 &&
-        this.field[coord.i][coord.j - 1]  === 0)
-        places.push({i: coord.i, j: coord.j - 1})
+        this.field[coord.i][coord.j - 1] === 0)
+        places.push({ i: coord.i, j: coord.j - 1 })
     if (coord.j < this.N - 1 &&
-        this.field[coord.i][coord.j + 1]  === 0)
-        places.push({i: coord.i, j: coord.j + 1})
+        this.field[coord.i][coord.j + 1] === 0)
+        places.push({ i: coord.i, j: coord.j + 1 })
 
     return places;
 }
 
+// Установка статуса type для точки coord
 Field.prototype.set = function (coord, type) {
     if (type > -1 && type < 6)
         this.field[coord.i][coord.j] = type;
     else
         throw "Неверно указан тип для присваимаемого значения поля";
 }
-
-// Field.prototype.check = function (coord) {
-//     return this.field[coord.i][coord.j];
-// }
-
-
-// export default Field;

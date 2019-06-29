@@ -7,21 +7,20 @@ class Ship {
     // Проверка статуса корабля
     checkStatus = function () {
         if (this.hurt === 0)
-            this.status =  "live";
+            this.status = "live";
         else if (this.hurt === this.shipLen) {
-            this.status =  "died";
+            this.status = "died";
         }
         else if (this.hurt > 0 &&
             this.hurt < this.shipLen) {
-            this.status =  "hurted";
+            this.status = "hurted";
         }
         return this.status;
     }
 
 
     constructor(places = null, len = 0) {
-        if (places === null)
-        {
+        if (places === null) {
             this.shipLen = len;
             this.hurt = 0;
             this.status = "live";
