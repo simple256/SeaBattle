@@ -10,19 +10,17 @@ class Player {
         this.enemyField.create();
         this.enemyField.ships = [];
 
-        this.enemyField.ships.push(new Ship(null, 4));
+        this.createEnemyShips();
 
-        this.enemyField.ships.push(new Ship(null, 3));
-        this.enemyField.ships.push(new Ship(null, 3));
-
-        this.enemyField.ships.push(new Ship(null, 2));
-        this.enemyField.ships.push(new Ship(null, 2));
-        this.enemyField.ships.push(new Ship(null, 2));
-
-        this.enemyField.ships.push(new Ship(null, 1));
-        this.enemyField.ships.push(new Ship(null, 1));
-        this.enemyField.ships.push(new Ship(null, 1));
-        this.enemyField.ships.push(new Ship(null, 1));
+    }
+    createEnemyShips = function () {
+        var count = 1;
+        for (var i = this.enemyField.shipMaxLen; i > 0; i--) {
+            for (var j = 0; j < count; j++) {
+                this.enemyField.ships.push(new Ship(null, i));
+            }
+            count++;
+        }
     }
 };
 
